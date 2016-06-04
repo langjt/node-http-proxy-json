@@ -1,4 +1,4 @@
-# node-http-proxy-json
+# node-http-proxy-json [![Build Status](https://travis-ci.org/langjt/node-http-proxy-json.svg?branch=master)](https://travis-ci.org/langjt/node-http-proxy-json)
   for [node-http-proxy](https://github.com/nodejitsu/node-http-proxy) transform the response json from the proxied server.
 
 ## Install it via NPM
