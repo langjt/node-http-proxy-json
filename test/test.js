@@ -1,9 +1,5 @@
-# node-http-proxy-json
-A middleware component for [node-http-proxy](https://github.com/nodejitsu/node-http-proxy) transform the response json from the proxied server.
+var assert = require('chai').assert;
 
-## Usage
-
-```
 var zlib = require('zlib');
 var http = require('http');
 var httpProxy = require('http-proxy');
@@ -57,4 +53,29 @@ var targetServer = http.createServer(function (req, res) {
     res.write(JSON.stringify({name: 'node-http-proxy-json', age: 1, version: '1.0.0'}));
     res.end();
 }).listen(5001);
-```
+
+describe("modifyResponse", function () {
+    it('gzip: modify response json successfully', function (done) {
+        // Test server
+        http.get('http://localhost:5000', function (res) {
+            var body = '';
+            var gunzip = zlib.Gunzip();
+            res.pipe(gunzip);
+
+            gunzip.on('data', function (chunk) {
+                body += chunk;
+            }).on('end', function () {
+                assert.equal(JSON.stringify({name: 'node-http-proxy-json', age: 2}), body);
+
+                proxy.close();
+                server.close();
+                targetServer.close();
+
+                done();
+            });
+        });
+    });
+});
+
+
+

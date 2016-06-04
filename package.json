@@ -1,0 +1,32 @@
+{
+  "name": "node-http-proxy-json",
+  "version": "0.1.0",
+  "description": "for node-http-proxy transform the response json from the proxied server.",
+  "main": "index.js",
+  "scripts": {
+    "test": "./node_modules/.bin/mocha -R spec"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/langjt/node-http-proxy-json.git"
+  },
+  "keywords": [
+    "http-proxy",
+    "streaming",
+    "json"
+  ],
+  "author": "XianFa Lang <xianfalang@gmail.com> (http://www.cnblogs.com/langjt)",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/langjt/node-http-proxy-json/issues"
+  },
+  "homepage": "https://github.com/langjt/node-http-proxy-json#readme",
+  "dependencies": {
+    "concat-stream": "^1.5.1"
+  },
+  "devDependencies": {
+    "chai": "^3.5.0",
+    "http-proxy": "^1.13.3",
+    "mocha": "^2.5.3"
+  }
+}
