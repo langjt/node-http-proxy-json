@@ -1,5 +1,6 @@
 var zlib = require('zlib');
 var concatStream = require('concat-stream');
+var BufferHelper = require('bufferhelper');
 
 /**
  * Modify the response of json
@@ -9,13 +10,16 @@ var concatStream = require('concat-stream');
  */
 module.exports = function modifyResponse(res, contentEncoding, callback) {
     var unzip, zip;
-    // Now only deal with the gzip and deflate content-encoding.
-    if (contentEncoding === 'gzip') {
-        unzip = zlib.Gunzip();
-        zip = zlib.Gzip();
-    } else if (contentEncoding === 'deflate') {
-        unzip = zlib.Inflate();
-        zip = zlib.Deflate();
+    // Now only deal with the gzip/deflate/undefined content-encoding.
+    switch (contentEncoding) {
+        case 'gzip':
+            unzip = zlib.Gunzip();
+            zip = zlib.Gzip();
+            break;
+        case 'deflate':
+            unzip = zlib.Inflate();
+            zip = zlib.Deflate();
+            break;
     }
 
     // The cache response method can be called after the modification.
@@ -27,18 +31,25 @@ module.exports = function modifyResponse(res, contentEncoding, callback) {
             console.log('Unzip error: ', e);
             _end.call(res);
         });
+        handleCompressed(res, _write, _end, unzip, zip, callback);
+    } else if (!contentEncoding) {
+        handleUncompressed(res, _write, _end, callback);
     } else {
         console.log('Not supported content-encoding: ' + contentEncoding);
-        return;
     }
+};
 
+/**
+ * handle compressed
+ */
+function handleCompressed(res, _write, _end, unzip, zip, callback) {
     // The rewrite response method is replaced by unzip stream.
     res.write = function (data) {
         unzip.write(data);
     };
 
-    res.end = function (data) {
-        unzip.end(data);
+    res.end = function () {
+        unzip.end();
     };
 
     // Concat the unzip stream.
@@ -70,5 +81,38 @@ module.exports = function modifyResponse(res, contentEncoding, callback) {
         zip.write(body);
         zip.end();
     });
+
     unzip.pipe(concatWrite);
-};
+}
+
+/**
+ * handle Uncompressed
+ */
+function handleUncompressed(res, _write, _end, callback) {
+    var buffer = new BufferHelper();
+    // Rewrite response method and get the content.
+    res.write = function (data) {
+        buffer.concat(data);
+    };
+
+    res.end = function () {
+        var body;
+        try {
+            body = JSON.parse(buffer.toBuffer().toString());
+        } catch (e) {
+            console.log('JSON.parse error:', e);
+        }
+
+        // Custom modified logic
+        if (typeof callback === 'function') {
+            body = callback(body);
+        }
+
+        // Converts the JSON to buffer.
+        body = new Buffer(JSON.stringify(body));
+
+        // Call the response method
+        _write.call(res, body);
+        _end.call(res);
+    };
+}

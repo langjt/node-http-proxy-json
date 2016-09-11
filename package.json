@@ -1,10 +1,10 @@
 {
   "name": "node-http-proxy-json",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "description": "for node-http-proxy transform the response json from the proxied server.",
   "main": "index.js",
   "scripts": {
-    "test": "./node_modules/.bin/mocha -R spec"
+    "test": "./node_modules/.bin/mocha -R spec ./test/*.js"
   },
   "repository": {
     "type": "git",
@@ -25,6 +25,7 @@
     "concat-stream": "^1.5.1"
   },
   "devDependencies": {
+    "bufferhelper": "^0.2.1",
     "chai": "^3.5.0",
     "http-proxy": "^1.13.3",
     "mocha": "^2.5.3"
