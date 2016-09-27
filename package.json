@@ -22,10 +22,10 @@
   },
   "homepage": "https://github.com/langjt/node-http-proxy-json#readme",
   "dependencies": {
+    "bufferhelper": "^0.2.1",
     "concat-stream": "^1.5.1"
   },
   "devDependencies": {
-    "bufferhelper": "^0.2.1",
     "chai": "^3.5.0",
     "http-proxy": "^1.13.3",
     "mocha": "^2.5.3"
