@@ -3,8 +3,8 @@ var concatStream = require('concat-stream');
 var BufferHelper = require('bufferhelper');
 
 /**
- * Modify the response of json
- * @param res {Response} The http response
+ * Modify the response
+ * @param res {Object} The http response
  * @param contentEncoding {String} The http header content-encoding: gzip/deflate
  * @param callback {Function} Custom modified logic
  */
@@ -54,21 +54,14 @@ function handleCompressed(res, _write, _end, unzip, zip, callback) {
 
     // Concat the unzip stream.
     var concatWrite = concatStream(function (data) {
-        var body;
-        try {
-            body = JSON.parse(data.toString());
-        } catch (e) {
-            body = data.toString();
-            console.log('JSON.parse error:', e);
-        }
+        var body = data.toString();
 
         // Custom modified logic
         if (typeof callback === 'function') {
             body = callback(body);
         }
 
-        // Converts the JSON to buffer.
-        body = new Buffer(JSON.stringify(body));
+        body = new Buffer(body);
 
         // Call the response method and recover the content-encoding.
         zip.on('data', function (chunk) {
@@ -96,20 +89,14 @@ function handleUncompressed(res, _write, _end, callback) {
     };
 
     res.end = function () {
-        var body;
-        try {
-            body = JSON.parse(buffer.toBuffer().toString());
-        } catch (e) {
-            console.log('JSON.parse error:', e);
-        }
+        var body = buffer.toBuffer().toString();
 
         // Custom modified logic
         if (typeof callback === 'function') {
             body = callback(body);
         }
 
-        // Converts the JSON to buffer.
-        body = new Buffer(JSON.stringify(body));
+        body = new Buffer(body);
 
         // Call the response method
         _write.call(res, body);

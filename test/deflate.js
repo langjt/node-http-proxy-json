@@ -21,11 +21,12 @@ var proxy = httpProxy.createProxyServer({
 proxy.on('proxyRes', function (proxyRes, req, res) {
     modifyResponse(res, proxyRes.headers['content-encoding'], function (body) {
         if (body) {
+            body = JSON.parse(body);
             // modify some information
             body.age = 2;
             delete body.version;
         }
-        return body;
+        return JSON.stringify(body);
     });
 });
 
