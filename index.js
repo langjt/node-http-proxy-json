@@ -65,9 +65,9 @@ function handleCompressed(res, _write, _end, unzip, zip, callback) {
       body = callback(body);
     }
 
-    let finish = body => {
+    let finish = _body => {
       // Converts the JSON to buffer.
-      body = new Buffer(JSON.stringify(body));
+      let body = new Buffer(JSON.stringify(_body));
 
       // Call the response method and recover the content-encoding.
       zip.on('data', chunk => _write.call(res, chunk));
@@ -108,16 +108,16 @@ function handleUncompressed(res, _write, _end, callback) {
       body = callback(body);
     }
 
-    let finish = body => {
+    let finish = _body => {
       // Converts the JSON to buffer.
-      body = new Buffer(JSON.stringify(body));
+      let body = new Buffer(JSON.stringify(_body));
 
       // Call the response method
       _write.call(res, body);
       _end.call(res);
     };
 
-    if (body.then && body.then.call) {
+    if (body && body.then) {
       body.then(finish);
     } else {
       finish(body);
