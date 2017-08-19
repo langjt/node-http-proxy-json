@@ -151,7 +151,7 @@ proxy.on('proxyRes', function (proxyRes, req, res) {
             body.age = 2;
             delete body.version;
         }
-        return body;
+        return body; // return value can be a promise
     });
 });
 
