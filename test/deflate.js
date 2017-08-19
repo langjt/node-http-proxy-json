@@ -56,7 +56,13 @@ describe('modifyResponse--deflate', () => {
       })
       .listen(TARGET_SERVER_PORT);
   });
-  afterEach(() => {});
+
+  afterEach(() => {
+    proxy.close();
+    server.close();
+    targetServer.close();
+  });
+
   describe('callback returns data', () => {
     beforeEach(() => {
       // Listen for the `proxyRes` event on `proxy`.
@@ -68,6 +74,43 @@ describe('modifyResponse--deflate', () => {
             delete body.version;
           }
           return body;
+        });
+      });
+    });
+    it('deflate: modify response json successfully', done => {
+      // Test server
+      http.get('http://localhost:' + SERVER_PORT, res => {
+        let body = '';
+        let inflate = zlib.Inflate();
+        res.pipe(inflate);
+
+        inflate
+          .on('data', function(chunk) {
+            body += chunk;
+          })
+          .on('end', function() {
+            assert.equal(
+              JSON.stringify({ name: 'node-http-proxy-json', age: 2 }),
+              body
+            );
+
+            done();
+          });
+      });
+    });
+  });
+
+  describe('callback returns a promise', () => {
+    beforeEach(() => {
+      // Listen for the `proxyRes` event on `proxy`.
+      proxy.on('proxyRes', (proxyRes, req, res) => {
+        modifyResponse(res, proxyRes.headers['content-encoding'], body => {
+          if (body) {
+            // modify some information
+            body.age = 2;
+            delete body.version;
+          }
+          return Promise.resolve(body);
         });
       });
     });

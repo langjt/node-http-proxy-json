@@ -101,4 +101,42 @@ describe('modifyResponse--gzip', function() {
       });
     });
   });
+
+  describe('callback returns a promise', () => {
+    beforeEach(() => {
+      // Listen for the `proxyRes` event on `proxy`.
+      proxy.on('proxyRes', (proxyRes, req, res) => {
+        modifyResponse(res, proxyRes.headers['content-encoding'], body => {
+          if (body) {
+            // modify some information
+            body.age = 2;
+            delete body.version;
+          }
+          return Promise.resolve(body);
+        });
+      });
+    });
+
+    it('gzip: modify response json successfully', done => {
+      // Test server
+      http.get('http://localhost:' + SERVER_PORT, res => {
+        let body = '';
+        let gunzip = zlib.Gunzip();
+        res.pipe(gunzip);
+
+        gunzip
+          .on('data', chunk => {
+            body += chunk;
+          })
+          .on('end', () => {
+            assert.equal(
+              JSON.stringify({ name: 'node-http-proxy-json', age: 2 }),
+              body
+            );
+
+            done();
+          });
+      });
+    });
+  });
 });
