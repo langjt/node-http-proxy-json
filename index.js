@@ -1,3 +1,5 @@
+'use strict';
+
 const zlib = require('zlib');
 const concatStream = require('concat-stream');
 const BufferHelper = require('bufferhelper');

@@ -1,3 +1,4 @@
+'use strict';
 /**
  * Test content-encoding for deflate
  */
