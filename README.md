@@ -17,7 +17,7 @@ npm install node-http-proxy-json
 
 #### Simulation server using gzip compression
 
-```
+```js
 var zlib = require('zlib');
 var http = require('http');
 var httpProxy = require('http-proxy');
@@ -36,7 +36,7 @@ proxy.on('proxyRes', function (proxyRes, req, res) {
             body.age = 2;
             delete body.version;
         }
-        return body;
+        return body; // return value can be a promise
     });
 });
 
@@ -75,7 +75,7 @@ var targetServer = http.createServer(function (req, res) {
 
 #### Simulation server using deflate compression
 
-```
+```js
 var zlib = require('zlib');
 var http = require('http');
 var httpProxy = require('http-proxy');
@@ -94,7 +94,7 @@ proxy.on('proxyRes', function (proxyRes, req, res) {
             body.age = 2;
             delete body.version;
         }
-        return body;
+        return body; // return value can be a promise
     });
 });
 
@@ -133,7 +133,7 @@ var targetServer = http.createServer(function (req, res) {
 
 #### Server does not enable compression
 
-```
+```js
 var http = require('http');
 var httpProxy = require('http-proxy');
 var modifyResponse = require('../');
@@ -151,7 +151,7 @@ proxy.on('proxyRes', function (proxyRes, req, res) {
             body.age = 2;
             delete body.version;
         }
-        return body;
+        return body; // return value can be a promise
     });
 });
 
