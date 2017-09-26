@@ -1,6 +1,6 @@
 {
   "name": "node-http-proxy-json",
-  "version": "0.1.4",
+  "version": "0.1.5",
   "description": "for node-http-proxy transform the response json from the proxied server.",
   "main": "index.js",
   "scripts": {

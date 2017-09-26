@@ -30,7 +30,7 @@ var proxy = httpProxy.createProxyServer({
 
 // Listen for the `proxyRes` event on `proxy`.
 proxy.on('proxyRes', function (proxyRes, req, res) {
-    modifyResponse(res, proxyRes.headers['content-encoding'], function (body) {
+    modifyResponse(res, proxyRes, function (body) {
         if (body) {
             // modify some information
             body.age = 2;
@@ -88,7 +88,7 @@ var proxy = httpProxy.createProxyServer({
 
 // Listen for the `proxyRes` event on `proxy`.
 proxy.on('proxyRes', function (proxyRes, req, res) {
-    modifyResponse(res, proxyRes.headers['content-encoding'], function (body) {
+    modifyResponse(res, proxyRes, function (body) {
         if (body) {
             // modify some information
             body.age = 2;
@@ -145,7 +145,7 @@ var proxy = httpProxy.createProxyServer({
 
 // Listen for the `proxyRes` event on `proxy`.
 proxy.on('proxyRes', function (proxyRes, req, res) {
-    modifyResponse(res, proxyRes.headers['content-encoding'], function (body) {
+    modifyResponse(res, proxyRes, function (body) {
         if (body) {
             // modify some information
             body.age = 2;

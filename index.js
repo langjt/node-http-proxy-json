@@ -7,10 +7,20 @@ const BufferHelper = require('bufferhelper');
 /**
  * Modify the response of json
  * @param res {Response} The http response
- * @param contentEncoding {String} The http header content-encoding: gzip/deflate
+ * @param proxyRes {proxyRes|String} String: The http header content-encoding: gzip/deflate
  * @param callback {Function} Custom modified logic
  */
-module.exports = function modifyResponse(res, contentEncoding, callback) {
+module.exports = function modifyResponse(res, proxyRes, callback) {
+  let contentEncoding = proxyRes;
+  if (proxyRes && proxyRes.headers) {
+    contentEncoding = proxyRes.headers['content-encoding'];
+    // Delete the content-length if it exists. Otherwise, an exception will occur
+    // @see: https://github.com/langjt/node-http-proxy-json/issues/10
+    if ('content-length' in proxyRes.headers) {
+      delete proxyRes.headers['content-length'];
+    }
+  }
+
   let unzip, zip;
   // Now only deal with the gzip/deflate/undefined content-encoding.
   switch (contentEncoding) {
@@ -29,7 +39,7 @@ module.exports = function modifyResponse(res, contentEncoding, callback) {
   let _end = res.end;
 
   if (unzip) {
-    unzip.on('error', function(e) {
+    unzip.on('error', function (e) {
       console.log('Unzip error: ', e);
       _end.call(res);
     });

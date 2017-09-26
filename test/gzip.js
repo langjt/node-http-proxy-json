@@ -69,7 +69,7 @@ describe('modifyResponse--gzip', function() {
     beforeEach(() => {
       // Listen for the `proxyRes` event on `proxy`.
       proxy.on('proxyRes', (proxyRes, req, res) => {
-        modifyResponse(res, proxyRes.headers['content-encoding'], body => {
+        modifyResponse(res, proxyRes, body => {
           if (body) {
             // modify some information
             body.age = 2;
@@ -107,7 +107,7 @@ describe('modifyResponse--gzip', function() {
     beforeEach(() => {
       // Listen for the `proxyRes` event on `proxy`.
       proxy.on('proxyRes', (proxyRes, req, res) => {
-        modifyResponse(res, proxyRes.headers['content-encoding'], body => {
+        modifyResponse(res, proxyRes, body => {
           if (body) {
             // modify some information
             body.age = 2;
