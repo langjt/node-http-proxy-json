@@ -1,15 +1,14 @@
-# node-http-proxy-json [![Build Status](https://travis-ci.org/langjt/node-http-proxy-json.svg?branch=master)](https://travis-ci.org/langjt/node-http-proxy-json)
-  for [node-http-proxy](https://github.com/nodejitsu/node-http-proxy) transform the response json from the proxied server.
+# http-proxy-response-rewrite [![Build Status](https://travis-ci.org/saskodh/http-proxy-response-rewrite.svg?branch=master)](https://travis-ci.org/saskodh/http-proxy-response-rewrite)
+Rewrite the response body from [http-proxy](https://github.com/nodejitsu/node-http-proxy).
 
 ## Installation
 
 ```  
-npm install node-http-proxy-json
+npm install http-proxy-response-rewrite
 ```
 
 ## Motivation
-  When using [node-http-proxy](https://github.com/nodejitsu/node-http-proxy) need to modify the response. If your proxy server returns HTML/XML document, you can try [Harmon](https://github.com/No9/harmon).
-  But sometimes the proxy server only returns the JSON. For example, call API from the server. Usually the server will compress the data.
+  When using [http-proxy](https://github.com/nodejitsu/node-http-proxy) sometimes you will need to modify the response body. While the response object is available and can be easily modified, the response body will usually be compressed. This library will take care of the necessary (de)compressing and leave to you only the modification concerns.
   So before using this repository, confirm your server compression format, currently only supports **gzip**、**deflate** and **uncompressed**.
   If you need other compression formats, please create a new Issue, and I will try to achieve it as much as possible.
 
@@ -33,8 +32,10 @@ proxy.on('proxyRes', function (proxyRes, req, res) {
     modifyResponse(res, proxyRes.headers['content-encoding'], function (body) {
         if (body) {
             // modify some information
-            body.age = 2;
-            delete body.version;
+            var modifiedBody = JSON.parse(body);
+            modifiedBody.age = 2;
+            delete modifiedBody.version;
+            return JSON.stringify(modifiedBody);
         }
         return body;
     });
@@ -68,7 +69,7 @@ var targetServer = http.createServer(function (req, res) {
     };
 
     res.writeHead(200, {'Content-Type': 'application/json', 'Content-Encoding': 'gzip'});
-    res.write(JSON.stringify({name: 'node-http-proxy-json', age: 1, version: '1.0.0'}));
+    res.write(JSON.stringify({name: 'http-proxy-json', age: 1, version: '1.0.0'}));
     res.end();
 }).listen(5001);
 ```
@@ -91,8 +92,10 @@ proxy.on('proxyRes', function (proxyRes, req, res) {
     modifyResponse(res, proxyRes.headers['content-encoding'], function (body) {
         if (body) {
             // modify some information
-            body.age = 2;
-            delete body.version;
+            var modifiedBody = JSON.parse(body);
+            modifiedBody.age = 2;
+            delete modifiedBody.version;
+            return JSON.stringify(modifiedBody);
         }
         return body;
     });
@@ -126,7 +129,7 @@ var targetServer = http.createServer(function (req, res) {
     };
 
     res.writeHead(200, {'Content-Type': 'application/json', 'Content-Encoding': 'deflate'});
-    res.write(JSON.stringify({name: 'node-http-proxy-json', age: 1, version: '1.0.0'}));
+    res.write(JSON.stringify({name: 'http-proxy-json', age: 1, version: '1.0.0'}));
     res.end();
 }).listen(5001);
 ```
@@ -148,8 +151,10 @@ proxy.on('proxyRes', function (proxyRes, req, res) {
     modifyResponse(res, proxyRes.headers['content-encoding'], function (body) {
         if (body) {
             // modify some information
-            body.age = 2;
-            delete body.version;
+            var modifiedBody = JSON.parse(body);
+            modifiedBody.age = 2;
+            delete modifiedBody.version;
+            return JSON.stringify(modifiedBody);
         }
         return body;
     });
@@ -163,7 +168,7 @@ var server = http.createServer(function (req, res) {
 // Create your target server
 var targetServer = http.createServer(function (req, res) {
     res.writeHead(200, {'Content-Type': 'application/json', 'Content-Encoding': 'deflate'});
-    res.write(JSON.stringify({name: 'node-http-proxy-json', age: 1, version: '1.0.0'}));
+    res.write(JSON.stringify({name: 'http-proxy-json', age: 1, version: '1.0.0'}));
     res.end();
 }).listen(5001);
 ```

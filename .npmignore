@@ -1,0 +1,8 @@
+# Ignore everything
+*
+
+# But not these files...
+!package.json
+!index.js
+!LICENSE
+!README.md
