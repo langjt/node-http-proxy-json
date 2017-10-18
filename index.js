@@ -129,8 +129,10 @@ function handleUncompressed(res, _write, _end, callback) {
 
     if (body && body.then) {
       body.then(finish);
-    } else {
+    } else if (body !== undefined) {
       finish(body);
+    } else {
+      console.log('No response!');
     }
   };
 }
