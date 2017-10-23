@@ -127,7 +127,7 @@ function handleUncompressed(res, _write, _end, callback) {
       _write.call(res, body);
       _end.call(res);
     };
-    
+
     if (body && body.then) {
       body.then(finish);
     } else {
