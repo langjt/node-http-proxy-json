@@ -110,6 +110,7 @@ function handleUncompressed(res, _write, _end, callback) {
     try {
       body = JSON.parse(buffer.toBuffer().toString());
     } catch (e) {
+      body = buffer.toBuffer().toString();
       console.log('JSON.parse error:', e);
     }
 
@@ -126,13 +127,11 @@ function handleUncompressed(res, _write, _end, callback) {
       _write.call(res, body);
       _end.call(res);
     };
-
+    
     if (body && body.then) {
       body.then(finish);
-    } else if (body !== undefined) {
-      finish(body);
     } else {
-      console.log('No response!');
+      finish(body);
     }
   };
 }
