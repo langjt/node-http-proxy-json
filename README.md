@@ -21,7 +21,7 @@ npm install node-http-proxy-json
 var zlib = require('zlib');
 var http = require('http');
 var httpProxy = require('http-proxy');
-var modifyResponse = require('../');
+var modifyResponse = require('node-http-proxy-json');
 
 // Create a proxy server
 var proxy = httpProxy.createProxyServer({
