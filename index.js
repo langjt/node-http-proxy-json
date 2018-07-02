@@ -1,6 +1,6 @@
 'use strict';
-
 const zlib = require('zlib');
+const iltorb = require('iltorb');
 const concatStream = require('concat-stream');
 const BufferHelper = require('bufferhelper');
 
@@ -32,6 +32,10 @@ module.exports = function modifyResponse(res, proxyRes, callback) {
       unzip = zlib.Inflate();
       zip = zlib.Deflate();
       break;
+    case 'br':
+      unzip = iltorb.decompressStream();
+      zip = iltorb.compressStream();
+      break;
   }
 
   // The cache response method can be called after the modification.
@@ -39,7 +43,7 @@ module.exports = function modifyResponse(res, proxyRes, callback) {
   let _end = res.end;
 
   if (unzip) {
-    unzip.on('error', function (e) {
+    unzip.on('error', function(e) {
       console.log('Unzip error: ', e);
       _end.call(res);
     });
@@ -50,6 +54,18 @@ module.exports = function modifyResponse(res, proxyRes, callback) {
     console.log('Not supported content-encoding: ' + contentEncoding);
   }
 };
+
+function getBufferFromBody(body) {
+  let body;
+  if (typeof _body === 'string') {
+    // Converts string (html or simple text) to buffer.
+    body = new Buffer(_body);
+  } else {
+    // Converts the JSON to buffer.
+    body = new Buffer(JSON.stringify(_body));
+  }
+  return body;
+}
 
 /**
  * handle compressed
@@ -76,8 +92,7 @@ function handleCompressed(res, _write, _end, unzip, zip, callback) {
     }
 
     let finish = _body => {
-      // Converts the JSON to buffer.
-      let body = new Buffer(JSON.stringify(_body));
+      const body = getBufferFromBody(_body);
 
       // Call the response method and recover the content-encoding.
       zip.on('data', chunk => _write.call(res, chunk));
@@ -104,7 +119,6 @@ function handleUncompressed(res, _write, _end, callback) {
   let buffer = new BufferHelper();
   // Rewrite response method and get the content.
   res.write = data => buffer.concat(data);
-
   res.end = () => {
     let body;
     try {
@@ -120,8 +134,7 @@ function handleUncompressed(res, _write, _end, callback) {
     }
 
     let finish = _body => {
-      // Converts the JSON to buffer.
-      let body = new Buffer(JSON.stringify(_body));
+      const body = getBufferFromBody(_body);
 
       // Call the response method
       _write.call(res, body);

@@ -23,7 +23,8 @@
   "homepage": "https://github.com/langjt/node-http-proxy-json#readme",
   "dependencies": {
     "bufferhelper": "^0.2.1",
-    "concat-stream": "^1.5.1"
+    "concat-stream": "^1.5.1",
+    "iltorb": "^2.3.2"
   },
   "devDependencies": {
     "chai": "^3.5.0",
