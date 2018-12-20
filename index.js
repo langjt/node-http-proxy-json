@@ -55,6 +55,9 @@ module.exports = function modifyResponse(res, proxyRes, callback) {
  * handle compressed
  */
 function handleCompressed(res, _write, _end, unzip, zip, callback) {
+  //Forward drain events from unzip to the original response
+  unzip.on("drain", () => res.emit("drain"));
+
   // The rewrite response method is replaced by unzip stream.
   res.write = data => unzip.write(data);
 
