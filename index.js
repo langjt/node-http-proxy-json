@@ -64,7 +64,12 @@ function handleCompressed(res, _write, _end, unzip, zip, callback) {
   let concatWrite = concatStream(data => {
     let body;
     try {
-      body = JSON.parse(data.toString());
+      // Handle empty response body without throwing JSON parse error
+      if (!data.toString()) {
+        body = data.toString();
+      } else {
+        body = JSON.parse(data.toString());
+      }
     } catch (e) {
       body = data.toString();
       console.log('JSON.parse error:', e);
@@ -108,7 +113,12 @@ function handleUncompressed(res, _write, _end, callback) {
   res.end = () => {
     let body;
     try {
-      body = JSON.parse(buffer.toBuffer().toString());
+      // Handle empty response body without throwing JSON parse error
+      if (!buffer.toBuffer().toString()) {
+        body = buffer.toBuffer().toString();
+      } else {
+        body = JSON.parse(buffer.toBuffer().toString());
+      }
     } catch (e) {
       body = buffer.toBuffer().toString();
       console.log('JSON.parse error:', e);
