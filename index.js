@@ -32,6 +32,10 @@ module.exports = function modifyResponse(res, proxyRes, callback) {
       unzip = zlib.Inflate();
       zip = zlib.Deflate();
       break;
+    case 'br':
+      unzip = zlib.BrotliDecompress && zlib.BrotliDecompress();
+      zip = zlib.BrotliCompress && zlib.BrotliCompress();
+      break;
   }
 
   // The cache response method can be called after the modification.
