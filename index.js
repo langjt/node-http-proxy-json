@@ -63,7 +63,7 @@ module.exports = function modifyResponse(res, proxyRes, callback) {
  */
 function handleCompressed(res, _write, _end, unzip, zip, callback) {
   // The rewrite response method is replaced by unzip stream.
-  res.write = data => unzip.write(data);
+  res.write = data => { unzip.write(data) };
 
   res.end = () => unzip.end();
 
