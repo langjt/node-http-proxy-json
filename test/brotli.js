@@ -13,6 +13,10 @@ const modifyResponse = require('../');
 const SERVER_PORT = 5000;
 const TARGET_SERVER_PORT = 5001;
 
+const isObject = function (obj) {
+  return Object.prototype.toString.call(obj) === '[object Object]';
+}
+
 describe('modifyResponse--brotli', function() {
   if (typeof zlib.createBrotliCompress !== 'function') {
     return console.log('Brotli not available. Skipping "modifyResponse--brotli" test.');
@@ -74,7 +78,7 @@ describe('modifyResponse--brotli', function() {
       // Listen for the `proxyRes` event on `proxy`.
       proxy.on('proxyRes', (proxyRes, req, res) => {
         modifyResponse(res, proxyRes, body => {
-          if (body) {
+          if (isObject(body)) {
             // modify some information
             body.age = 2;
             delete body.version;
@@ -112,7 +116,7 @@ describe('modifyResponse--brotli', function() {
       // Listen for the `proxyRes` event on `proxy`.
       proxy.on('proxyRes', (proxyRes, req, res) => {
         modifyResponse(res, proxyRes, body => {
-          if (body) {
+          if (isObject(body)) {
             // modify some information
             body.age = 2;
             delete body.version;

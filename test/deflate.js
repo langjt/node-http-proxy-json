@@ -13,6 +13,10 @@ const modifyResponse = require('../');
 const SERVER_PORT = 5002;
 const TARGET_SERVER_PORT = 5003;
 
+const isObject = function (obj) {
+  return Object.prototype.toString.call(obj) === '[object Object]';
+}
+
 describe('modifyResponse--deflate', () => {
   let proxy, server, targetServer;
   beforeEach(() => {
@@ -28,7 +32,7 @@ describe('modifyResponse--deflate', () => {
 
     // Create your target server
     targetServer = http
-      .createServer(function(req, res) {
+      .createServer(function (req, res) {
         // Create deflated content
         let deflate = zlib.Deflate();
         let _write = res.write;
@@ -69,7 +73,7 @@ describe('modifyResponse--deflate', () => {
       // Listen for the `proxyRes` event on `proxy`.
       proxy.on('proxyRes', (proxyRes, req, res) => {
         modifyResponse(res, proxyRes, body => {
-          if (body) {
+          if (isObject(body)) {
             // modify some information
             body.age = 2;
             delete body.version;
@@ -86,10 +90,10 @@ describe('modifyResponse--deflate', () => {
         res.pipe(inflate);
 
         inflate
-          .on('data', function(chunk) {
+          .on('data', function (chunk) {
             body += chunk;
           })
-          .on('end', function() {
+          .on('end', function () {
             assert.equal(
               JSON.stringify({ name: 'node-http-proxy-json', age: 2 }),
               body
@@ -106,7 +110,7 @@ describe('modifyResponse--deflate', () => {
       // Listen for the `proxyRes` event on `proxy`.
       proxy.on('proxyRes', (proxyRes, req, res) => {
         modifyResponse(res, proxyRes, body => {
-          if (body) {
+          if (isObject(body)) {
             // modify some information
             body.age = 2;
             delete body.version;
@@ -123,10 +127,10 @@ describe('modifyResponse--deflate', () => {
         res.pipe(inflate);
 
         inflate
-          .on('data', function(chunk) {
+          .on('data', function (chunk) {
             body += chunk;
           })
-          .on('end', function() {
+          .on('end', function () {
             assert.equal(
               JSON.stringify({ name: 'node-http-proxy-json', age: 2 }),
               body

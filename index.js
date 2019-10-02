@@ -3,6 +3,9 @@
 const zlib = require('zlib');
 const concatStream = require('concat-stream');
 const BufferHelper = require('bufferhelper');
+const isString = function (obj) {
+  return Object.prototype.toString.call(obj) === '[object String]';
+}
 
 /**
  * Modify the response of json
@@ -71,7 +74,6 @@ function handleCompressed(res, _write, _end, unzip, zip, callback) {
       body = JSON.parse(data.toString());
     } catch (e) {
       body = data.toString();
-      console.log('JSON.parse error:', e);
     }
 
     // Custom modified logic
@@ -80,8 +82,12 @@ function handleCompressed(res, _write, _end, unzip, zip, callback) {
     }
 
     let finish = _body => {
+      // empty response body
+      if (!_body) {
+        _body = '';
+      }
       // Converts the JSON to buffer.
-      let body = new Buffer(JSON.stringify(_body));
+      let body = new Buffer(isString(_body) ? _body : JSON.stringify(_body));
 
       // Call the response method and recover the content-encoding.
       zip.on('data', chunk => _write.call(res, chunk));
@@ -115,7 +121,6 @@ function handleUncompressed(res, _write, _end, callback) {
       body = JSON.parse(buffer.toBuffer().toString());
     } catch (e) {
       body = buffer.toBuffer().toString();
-      console.log('JSON.parse error:', e);
     }
 
     // Custom modified logic
@@ -124,8 +129,12 @@ function handleUncompressed(res, _write, _end, callback) {
     }
 
     let finish = _body => {
+      // empty response body
+      if (!_body) {
+        _body = '';
+      }
       // Converts the JSON to buffer.
-      let body = new Buffer(JSON.stringify(_body));
+      let body = new Buffer(isString(_body) ? _body : JSON.stringify(_body));
 
       // Call the response method
       _write.call(res, body);
