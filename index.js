@@ -25,7 +25,7 @@ module.exports = function modifyResponse(res, proxyRes, callback) {
   }
 
   let unzip, zip;
-  // Now only deal with the gzip/deflate/undefined content-encoding.
+  // Now only deal with the gzip/deflate/brotli/undefined content-encoding.
   switch (contentEncoding) {
     case 'gzip':
       unzip = zlib.Gunzip();
